@@ -7,7 +7,7 @@ var chatDB = mysql.createConnection({
   database: 'chat'
 });
 
-//connect to database
+//connect to database 
 chatDB.connect();
 
 //promisified mysql query method
