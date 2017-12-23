@@ -38,10 +38,10 @@ module.exports = {
     return new Promise((resolve, reject) => {
       this.getID(value, field, table)
         .then(status => {
-          return status !== false ? resolve(status) : chatDB.queryAsync('INSERT INTO ?? (??) VALUES (?)', [table, field, value]);
+          return status !== false ? {affectedRows: [status], insertId: status} : chatDB.queryAsync('INSERT INTO ?? (??) VALUES (?)', [table, field, value]);
         }, err => reject(err))
         .then(data => {
-          data.affectedRows > 0 ? resolve(data.insertId) : reject(data.serverStatus);
+          return data.affectedRows.length > 0 ? resolve(data.insertId) : reject(data.serverStatus);
         }, err => reject(err));
     });
   },
@@ -65,10 +65,21 @@ module.exports = {
     //returns room id of new room or room id if room already exists
     return this.insertTo(room, 'name', 'rooms');
   },
-  postMessage(message) {
-
+  postMessage({text, user, room, time}) {
+    //posts a message to the database
+    return new Promise((resolve, reject) => {
+      this.addUser(user)
+        .then(userId => {
+          user = userId;
+          return this.addRoom(room);
+        }, err => reject(err))
+        .then(roomId => {
+          room = roomId;
+          return chatDB.queryAsync('INSERT INTO messages (text, user, room, time) VALUES (?, ?, ?, ?)', [text, user, room, time]);
+        }, err => reject(err))
+        .then(data => {
+          data.affectedRows > 0 ? resolve(data.insertId) : reject(data.serverStatus);
+        }, err => reject(err));
+    });
   }
 };
-
-module.exports.getUser('andy')
-  .then(data => console.log(data));
