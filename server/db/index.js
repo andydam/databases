@@ -24,12 +24,21 @@ chatDB.queryAsync = function (...args) {
 };
 
 module.exports = {
-  getID(value, field, table) {
+  getID(value, table) {
     //returns id of value if in table, returns false if not in table
     return new Promise((resolve, reject) => {
-      chatDB.queryAsync('SELECT * FROM ?? WHERE ?? = ?', [table, field, value])
+      chatDB.queryAsync('SELECT * FROM ?? WHERE name = ?', [table, value])
         .then(data => {
           data.length > 0 ? resolve(data[0].id) : resolve(false);
+        }, err => reject(err));
+    });
+  },
+  getName(value, table) {
+    //returns name of id if in table, returns false if not in table
+    return new Promise((resolve, reject) => {
+      chatDB.queryAsync('SELECT * FROM ?? WHERE id = ?', [table, value])
+        .then(data => {
+          data.length > 0 ? resolve(data[0].name) : resolve(false);
         }, err => reject(err));
     });
   },
@@ -45,25 +54,33 @@ module.exports = {
         }, err => reject(err));
     });
   },
-  getUser(username) {
+  getUserID(username) {
     //checks to see if a user exists in the database
     //passes user id if in database, false if not
-    return this.getID(username, 'name', 'users');
+    return this.getID(username, 'users');
   },
   addUser(username) {
     //adds a user to the database
     //returns user id of new user or user id if user already exists
-    return this.insertTo(username, 'name', 'users');
+    return this.insertTo(username, 'users');
   },
-  getRoom(room) {
+  getUserName(userId) {
+    //gets username from database using user id
+    return this.getName(userId, 'users');
+  },
+  getRoomID(room) {
     //checks to see if room exists in the database
     //passes room id if in database, false if not
-    return this.getID(room, 'name', 'rooms');
+    return this.getID(room, 'rooms');
   },
   addRoom(room) {
     //adds a room to the database
     //returns room id of new room or room id if room already exists
-    return this.insertTo(room, 'name', 'rooms');
+    return this.insertTo(room, 'rooms');
+  },
+  getRoomName(roomId) {
+    //gets roomname from database using room id
+    return this.getName(roomId, 'rooms');
   },
   postMessage({text, user, room, time}) {
     //posts a message to the database
@@ -80,6 +97,29 @@ module.exports = {
         .then(data => {
           data.affectedRows > 0 ? resolve(data.insertId) : reject(data.serverStatus);
         }, err => reject(err));
+    });
+  },
+  getMessages() {
+    //get messages from database
+    return new Promise((resolve, reject) => {
+      var users;
+      var rooms;
+      chatDB.queryAsync('select * from users')
+        .then(data => {
+          users = data;
+          return chatDB.queryAsync('select * from rooms');
+        }, err => reject(err))
+        .then(data => {
+          rooms = data;
+          return chatDB.queryAsync('select * from messages');
+        }, err => reject(err))
+        .then(data => {
+          resolve(data.map(message => {
+            message.username = users.filter(user => user.id === message.user)[0].name;
+            message.roomname = rooms.filter(room => room.id === message.room)[0].name;
+            return message;
+          }))
+        }, err => reject(err))
     });
   }
 };
