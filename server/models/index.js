@@ -2,8 +2,12 @@ var db = require('../db');
 
 module.exports = {
   messages: {
-    get: function () {}, // a function which produces all the messages
-    post: function () {} // a function which can be used to insert a message into the database
+    get: function () {
+      return db.getMessages();
+    }, // a function which produces all the messages
+    post: function (message) {
+      return db.postMessage(message);
+    } // a function which can be used to insert a message into the database
   },
 
   users: {

@@ -7,7 +7,7 @@ var chatDB = mysql.createConnection({
   database: 'chat'
 });
 
-//connect to database 
+//connect to database
 chatDB.connect();
 
 //promisified mysql query method
@@ -117,6 +117,12 @@ module.exports = {
           resolve(data.map(message => {
             message.username = users.filter(user => user.id === message.user)[0].name;
             message.roomname = rooms.filter(room => room.id === message.room)[0].name;
+            message.id = new Number(message.time);
+            message.createdAt = new Date(message.time).toJSON();
+            message.updatedAt = message.createdAt;
+            delete message.time;
+            delete message.user;
+            delete message.room;
             return message;
           }))
         }, err => reject(err))
