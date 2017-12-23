@@ -20,7 +20,7 @@ CREATE TABLE `messages` (
   `text` MEDIUMTEXT NOT NULL COMMENT 'message text',
   `user` INTEGER NOT NULL COMMENT 'user id',
   `room` INTEGER NOT NULL COMMENT 'room id',
-  `time` INTEGER NOT NULL COMMENT 'utc time of message',
+  `time` BIGINT NOT NULL COMMENT 'utc time of message',
   PRIMARY KEY (`id`)
 ) COMMENT 'holds all messages';
 
@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS `users`;
 		
 CREATE TABLE `users` (
   `id` INTEGER NOT NULL AUTO_INCREMENT COMMENT 'user id',
-  `name` CHAR NOT NULL,
+  `name` MEDIUMTEXT NOT NULL,
   PRIMARY KEY (`id`)
 ) COMMENT 'list of users';
 
@@ -46,7 +46,7 @@ DROP TABLE IF EXISTS `rooms`;
 		
 CREATE TABLE `rooms` (
   `id` INTEGER NOT NULL AUTO_INCREMENT COMMENT 'room id',
-  `name` CHAR NOT NULL COMMENT 'room name',
+  `name` MEDIUMTEXT NOT NULL COMMENT 'room name',
   PRIMARY KEY (`id`)
 ) COMMENT 'list of rooms';
 
