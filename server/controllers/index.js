@@ -29,26 +29,19 @@ module.exports = {
     }, 
     post(req, res) {
       //handles post request to add a message to the database
-      //declare a variable to hold incoming data
-      let postData = '';
-      res.on('data', data => {
-        postData += data;
-      });
-      res.on('end', () => {
-        //use messages model to post message to database
-        models.messages.post(JSON.parse(postData))
-          .then(returnObj => {
-            //add appropriate headers to response
-            res.writeHead(201, defaultCorsHeaders);
-            //add response object to response and end response
-            res.end(JSON.stringify(returnObj));
-          }, err => {
-            //messages model errored out in posting message
-            //send response containing 400 code and error
-            res.writeHead(400, defaultCorsHeaders);
-            res.end(JSON.stringify(err));
-          });
-      });
+      //use messages model to post message to database
+      models.messages.post(req.body)
+        .then(returnObj => {
+          //add appropriate headers to response
+          res.writeHead(201, defaultCorsHeaders);
+          //add response object to response and end response
+          res.end(JSON.stringify(returnObj));
+        }, err => {
+          //messages model errored out in posting message
+          //send response containing 400 code and error
+          res.writeHead(400, defaultCorsHeaders);
+          res.end(JSON.stringify(err));
+        });
     }
   },
 
@@ -71,26 +64,19 @@ module.exports = {
     },
     post(req, res) {
       //handles a  post request to add a user to the database
-      //declare a variable to hold incoming data
-      let postData = '';
-      res.on('data', data => {
-        postData += data;
-      });
-      res.on('end', () => {
-        //use users model to post user to database
-        models.users.post(JSON.parse(postData))
-          .then(returnObj => {
-            //add appropriate headers to response
-            res.writeHead(201, defaultCorsHeaders);
-            //add response object to response and end response
-            res.end(JSON.stringify(returnObj));
-          }, err => {
-            //users model errored out in posting user
-            //send response containing 400 code and error
-            res.writeHead(400, defaultCorsHeaders);
-            res.end(JSON.stringify(err));
-          });
-      });
+      //use users model to post user to database
+      models.users.post(req.body)
+        .then(returnObj => {
+          //add appropriate headers to response
+          res.writeHead(201, defaultCorsHeaders);
+          //add response object to response and end response
+          res.end(JSON.stringify(returnObj));
+        }, err => {
+          //users model errored out in posting user
+          //send response containing 400 code and error
+          res.writeHead(400, defaultCorsHeaders);
+          res.end(JSON.stringify(err));
+        });
     }
   }
 };
