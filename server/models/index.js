@@ -20,15 +20,14 @@ module.exports = {
           }, err => reject(err))
           .then(rooms =>{
             //pull rooms from database
-            resolve(messages.map(message => {
+            resolve(messages.map(oldMessage => {
               //transform database message object into a chatterbox message object
-              message.username = users.filter(user => user.id = message.user)[0].name;
-              message.roomname = rooms.filter(room => room.id = message.room)[0].name;
-              message.createdAt = new Date(message.time).toJSON();
+              let message = {};
+              message.text = oldMessage.text;
+              message.username = users.filter(user => user.id = oldMessage.user)[0].name;
+              message.roomname = rooms.filter(room => room.id = oldMessage.room)[0].name;
+              message.createdAt = new Date(oldMessage.time).toJSON();
               message.updatedAt = message.createdAt;
-              delete message.user;
-              delete message.room; 
-              delete message.time;
               return message;
             }));
           }, err => reject(err));
