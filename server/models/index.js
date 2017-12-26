@@ -24,8 +24,8 @@ module.exports = {
               //transform database message object into a chatterbox message object
               let message = {};
               message.text = oldMessage.text;
-              message.username = users.filter(user => user.id = oldMessage.user)[0].name;
-              message.roomname = rooms.filter(room => room.id = oldMessage.room)[0].name;
+              message.username = users.filter(user => user.id === oldMessage.user)[0].name;
+              message.roomname = rooms.filter(room => room.id === oldMessage.room)[0].name;
               message.createdAt = new Date(oldMessage.time).toJSON();
               message.updatedAt = message.createdAt;
               return message;
@@ -36,7 +36,7 @@ module.exports = {
     post(message, time = new Date().getTime()) {
       return new Promise((resolve, reject) => {
         //post message to database
-        db.postMessage({text: message.message, user: message.username, room: message.roomname, time})
+        db.postMessage({text: message.text || message.message, user: message.username, room: message.roomname, time: time})
           .then(id => {
             //if post successful, return back response object
             id ? resolve({
