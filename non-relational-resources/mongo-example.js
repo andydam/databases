@@ -13,8 +13,10 @@ var mongoClient = require('mongodb').MongoClient;
 var url = 'mongodb://localhost:27017/test';
 
 // Open the client's connection to the server:
-mongoClient.connect(url, function(err, db) {
+mongoClient.connect(url, function(err, client) {
   console.log('Connected to MongoDB!');
+
+  var db = client.db('test');
 
   // Create a collection, if it doesn't exist already:
   db.createCollection('demo-collection', function(err, collection) {
@@ -43,7 +45,7 @@ mongoClient.connect(url, function(err, db) {
         });
 
         // Close the db connection when we're done with it:
-        db.close();
+        client.close();
         console.log('Closed the connection!');
       });
     });
